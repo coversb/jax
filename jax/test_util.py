@@ -18,6 +18,7 @@ import re
 import os
 import textwrap
 from typing import Dict, List, Generator, Sequence, Tuple, Union
+import time
 import unittest
 import warnings
 import zlib
@@ -883,6 +884,10 @@ class JaxTestCase(parameterized.TestCase):
     # a) it is deterministic run to run, unlike hash() which is randomized.
     # b) it returns values in int32 range, which RandomState requires.
     self._rng = npr.RandomState(zlib.adler32(self._testMethodName.encode()))
+
+  def tearDown(self):
+    super(JaxTestCase, self).tearDown()
+    time.sleep(1)
 
   def rng(self):
     return self._rng
