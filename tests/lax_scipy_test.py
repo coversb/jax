@@ -386,6 +386,7 @@ class LaxBackedScipyTests(jtu.JaxTestCase):
 
     self.assertAllClose(actual, expected, rtol=1.1e-7, atol=3e-8)
 
+  @jtu.skip_on_devices("rocm")
   def testSphHarmOrderZeroDegreeOne(self):
     """Tests the spherical harmonics of order one and degree zero."""
     theta = jnp.array([2.0])
@@ -569,6 +570,7 @@ class LaxBackedScipyTests(jtu.JaxTestCase):
     for linear_size in linear_sizes
     for seed in seeds
     for dtype in jtu.dtypes.floating))
+  @jtu.skip_on_devices("rocm")
   def test_spectral_dac_svd(self, linear_size, seed, dtype):
     if jnp.dtype(dtype).name in ("bfloat16", "float16"):
       if jtu.device_under_test() != "cpu":

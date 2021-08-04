@@ -2437,7 +2437,7 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
           ((3, 10), (3, 10), 1.0, -1),
           ((2, 3, 10), (3, 10), 1.0, -2),
         ]))
-  @jtu.skip_on_devices("tpu")  # TODO(jakevdp): fix and reenable this test.
+  @jtu.skip_on_devices("tpu", "rocm")  # TODO(jakevdp): fix and reenable this test.
   @jax.numpy_rank_promotion('allow')  # This test explicitly exercises implicit rank promotion.
   def testTrapz(self, yshape, xshape, dtype, dx, axis):
     rng = jtu.rand_default(self.rng())

@@ -690,7 +690,7 @@ class PmapTest(jtu.JaxTestCase):
     expected = np.roll(x, shift=1, axis=0)
     self.assertAllClose(ans, expected, check_dtypes=False)
 
-  @jtu.skip_on_devices("cpu")
+  @jtu.skip_on_devices("cpu", "rocm")
   def testCollectivePermuteGrad(self):
     device_count = xla_bridge.device_count()
     shift_right = [(i, (i + 1)) for i in range(device_count - 1)]
