@@ -568,6 +568,7 @@ class LaxVmapTest(jtu.JaxTestCase):
       for padding in ["VALID", "SAME"]))
   @jtu.skip_on_flag("jax_skip_slow_tests", True)
   @jtu.ignore_warning(message="Using reduced precision for gradient.*")
+  @jtu.skip_on_devices("rocm")
   def testSelectAndGatherAdd(self, dtype, padding):
     rng = jtu.rand_small(self.rng())
     all_configs = itertools.chain(

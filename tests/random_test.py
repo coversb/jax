@@ -665,6 +665,7 @@ class LaxRandomTest(jtu.JaxTestCase):
       for dim in [1, 3, 5]
       for dtype in float_dtypes
       for method in ['svd', 'eigh', 'cholesky']))
+  @jtu.skip_on_devices("rocm")
   def testMultivariateNormal(self, dim, dtype, method):
     r = np.random.RandomState(dim)
     mean = r.randn(dim)

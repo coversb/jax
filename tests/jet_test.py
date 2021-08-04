@@ -87,7 +87,7 @@ class JetTest(jtu.JaxTestCase):
     self.assertAllClose(terms, expected_terms, atol=atol, rtol=rtol,
                         check_dtypes=check_dtypes)
 
-  @jtu.skip_on_devices("tpu")
+  @jtu.skip_on_devices("tpu", "rocm")
   def test_dot(self):
     M, K, N = 2, 3, 4
     order = 3

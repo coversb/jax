@@ -2302,6 +2302,7 @@ class LaxControlFlowTest(jtu.JaxTestCase):
       api.grad(loss)(a, b)
 
   @jtu.skip_on_flag("jax_skip_slow_tests", True)
+  @jtu.skip_on_devices("rocm")
   def test_custom_linear_solve_pytree(self):
     """Test custom linear solve with inputs and outputs that are pytrees."""
 
