@@ -104,7 +104,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
        "shape": shape, "dtype": dtype}
       for shape in [(1, 1), (3, 3), (2, 4, 4)]
       for dtype in float_types))
-  @jtu.skip_on_devices("tpu")
+  @jtu.skip_on_devices("tpu", "rocm")
   @jtu.skip_on_flag("jax_skip_slow_tests", True)
   def testDetGrad(self, shape, dtype):
     rng = jtu.rand_default(self.rng())

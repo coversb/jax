@@ -451,6 +451,7 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
     self._CompileAndCheck(lax_fun, args_maker)
 
   @genNamedParametersNArgs(5)
+  @jtu.skip_on_devices("rocm")
   def testBetaBinomLogPmf(self, shapes, dtypes):
     rng = jtu.rand_positive(self.rng())
     lax_fun = lsp_stats.betabinom.logpmf

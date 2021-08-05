@@ -230,6 +230,7 @@ class cuSparseTest(jtu.JaxTestCase):
     self.assertAllClose((op(M) @ B).sum(), y, rtol=MATMUL_TOL)
 
   @unittest.skipIf(jtu.device_under_test() != "gpu", "test requires GPU")
+  @jtu.skip_on_devices("rocm")
   def test_gpu_translation_rule(self):
     version = xla_bridge.get_backend().platform_version
     cuda_version = None if version == "<unknown>" else int(version.split()[-1])
@@ -284,6 +285,7 @@ class cuSparseTest(jtu.JaxTestCase):
        "shape": shape, "dtype": dtype}
       for shape in [(5, 8), (8, 5), (5, 5), (8, 8)]
       for dtype in jtu.dtypes.floating + jtu.dtypes.complex))
+  @jtu.skip_on_devices("rocm")
   def test_coo_fromdense_ad(self, shape, dtype):
     rng = rand_sparse(self.rng(), post=jnp.array)
     M = rng(shape, dtype)

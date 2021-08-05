@@ -385,6 +385,7 @@ class MaskingTest(jtu.JaxTestCase):
 
     self.assertAllClose(ans, expected, check_dtypes=False)
 
+  @jtu.skip_on_devices("rocm")
   def test_ragged_batched_rnn(self):
     n = 3
 
