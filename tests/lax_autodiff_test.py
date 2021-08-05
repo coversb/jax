@@ -202,6 +202,7 @@ class LaxAutodiffTest(jtu.JaxTestCase):
         for shapes in itertools.combinations_with_replacement(shape_group, rec.nargs)
         for dtype in rec.dtypes)
       for rec in LAX_GRAD_OPS))
+  @jtu.skip_on_devices("rocm")
   def testOpGrad(self, op, rng_factory, shapes, dtype, order, tol):
     rng = rng_factory(self.rng())
     if jtu.device_under_test() == "tpu" and op is lax.pow:

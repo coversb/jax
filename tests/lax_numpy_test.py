@@ -5051,6 +5051,7 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
         for base in [10.0, 2, np.e]
         for dtype in inexact_dtypes + [None,]))
   @jax.numpy_rank_promotion('allow')  # This test explicitly exercises implicit rank promotion.
+  @jtu.skip_on_devices("rocm")
   def testLogspace(self, start_shape, stop_shape, num,
                    endpoint, base, dtype):
     if (dtype in int_dtypes and
@@ -5513,6 +5514,7 @@ class NumpyGradTests(jtu.JaxTestCase):
         for dtype in rec.dtypes)
       for rec in GRAD_TEST_RECORDS))
   @jax.numpy_rank_promotion('allow')  # This test explicitly exercises implicit rank promotion.
+  @jtu.skip_on_devices("rocm")
   def testOpGrad(self, op, rng_factory, shapes, dtype, order, tol):
     rng = rng_factory(self.rng())
     tol = jtu.join_tolerance(tol, {np.float32: 1e-1, np.float64: 1e-3,
