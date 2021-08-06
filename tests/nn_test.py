@@ -46,6 +46,7 @@ class NNFunctionsTest(jtu.JaxTestCase):
     config.update("jax_numpy_rank_promotion", "allow")
 
   @jtu.skip_on_flag("jax_skip_slow_tests", True)
+  @jtu.skip_on_devices("rocm")
   def testSoftplusGrad(self):
     check_grads(nn.softplus, (1e-8,), order=4,
                 rtol=1e-2 if jtu.device_under_test() == "tpu" else None)
