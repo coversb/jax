@@ -208,6 +208,7 @@ class LaxTest(jtu.JaxTestCase):
         for shapes in itertools.combinations_with_replacement(shape_group, rec.nargs)
         for dtype in rec.dtypes)
       for rec in LAX_OPS))
+  @jtu.skip_on_devices("rocm")
   def testOpAgainstNumpy(self, op_name, rng_factory, shapes, dtype, tol):
     if (not config.x64_enabled and op_name == "nextafter"
         and dtype == np.float64):

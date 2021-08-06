@@ -94,6 +94,7 @@ class LaxVmapTest(jtu.JaxTestCase):
         for bdims in all_bdims(*shapes)
         for dtype in rec.dtypes)
       for rec in LAX_OPS))
+  @jtu.skip_on_devices("rocm")
   def testOp(self, op_name, rng_factory, shapes, dtype, bdims, tol):
     rng = rng_factory(self.rng())
     op = getattr(lax, op_name)

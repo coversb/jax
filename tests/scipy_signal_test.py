@@ -76,6 +76,7 @@ class LaxBackedScipySignalTests(jtu.JaxTestCase):
       for dtype in default_dtypes
       for xshape in twodim_shapes
       for yshape in twodim_shapes))
+  @jtu.skip_on_devices("rocm")
   def testConvolutions2D(self, xshape, yshape, dtype, mode, jsp_op, osp_op):
     rng = jtu.rand_default(self.rng())
     args_maker = lambda: [rng(xshape, dtype), rng(yshape, dtype)]

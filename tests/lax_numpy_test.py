@@ -545,6 +545,7 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
       for rec in itertools.chain(JAX_ONE_TO_ONE_OP_RECORDS,
                                  JAX_COMPOUND_OP_RECORDS)))
   @jax.numpy_rank_promotion('allow')  # This test explicitly exercises implicit rank promotion.
+  @jtu.skip_on_devices("rocm")
   def testOp(self, np_op, jnp_op, rng_factory, shapes, dtypes, check_dtypes,
              tolerance, inexact):
     np_op = jtu.ignore_warning(category=RuntimeWarning,
@@ -5722,6 +5723,7 @@ class NumpyUfuncTests(jtu.JaxTestCase):
      "name": name, "arg_dtypes": arg_dtypes}
     for name in _all_numpy_ufuncs()
     for arg_dtypes in jtu.cases_from_list(_dtypes_for_ufunc(name)))
+  @jtu.skip_on_devices("rocm")
   def testUfuncInputTypes(self, name, arg_dtypes):
     # TODO(jakevdp): fix following failures and remove from this exception list.
     if (name in ['divmod', 'floor_divide', 'fmod', 'gcd', 'left_shift', 'mod',
