@@ -384,6 +384,7 @@ class LaxTest(jtu.JaxTestCase):
       for dtype in float_dtypes
       for strides in [(1, 1), (1, 2), (2, 1)]
       for padding in ["VALID", "SAME"]))
+  @jtu.skip_on_devices("rocm")
   def testConv(self, lhs_shape, rhs_shape, dtype, strides, padding):
     rng = jtu.rand_small(self.rng())
     args_maker = lambda: [rng(lhs_shape, dtype), rng(rhs_shape, dtype)]

@@ -601,6 +601,7 @@ class LaxVmapTest(jtu.JaxTestCase):
       for shape in [(3, 2, 4, 6)]
       for dims in [(1, 1, 2, 1)]
       for strides in [(1, 2, 2, 1), (1, 1, 1, 1)]))
+  @jtu.skip_on_devices("rocm")
   def testSelectAndScatterAdd(self, dtype, padding, shape, dims, strides):
     rng = jtu.rand_small(self.rng())
 
