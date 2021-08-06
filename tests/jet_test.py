@@ -318,7 +318,7 @@ class JetTest(jtu.JaxTestCase):
   def test_mul(self):         self.binary_check(lambda x, y: x * y)
   @jtu.skip_on_devices("tpu")
   def test_max(self):         self.binary_check(lax.max)
-  @jtu.skip_on_devices("tpu")
+  @jtu.skip_on_devices("tpu", "rocm")
   def test_min(self):         self.binary_check(lax.min)
   @jtu.skip_on_devices("tpu")
   @jtu.ignore_warning(message="overflow encountered in power")
