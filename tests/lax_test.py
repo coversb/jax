@@ -192,6 +192,7 @@ class LaxTest(jtu.JaxTestCase):
         for shapes in itertools.combinations_with_replacement(shape_group, rec.nargs)
         for dtype in rec.dtypes)
       for rec in LAX_OPS))
+  @jtu.skip_on_devices("rocm")
   def testOp(self, op_name, rng_factory, shapes, dtype):
     rng = rng_factory(self.rng())
     args_maker = lambda: [rng(shape, dtype) for shape in shapes]

@@ -955,6 +955,7 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
       for shape in nonempty_array_shapes
       for dtype in all_dtypes
       for size in [1, 5, 10]))
+  @jtu.skip_on_devices("rocm")
   def testNonzeroSize(self, shape, dtype, size):
     rng = jtu.rand_some_zero(self.rng())
     args_maker = lambda: [rng(shape, dtype)]
