@@ -193,8 +193,8 @@ def jit_dispatch_with_transfer(state):
     x = f(imgs)
   x.block_until_ready()
 
-
-@google_benchmark.register
+# preview release works with single device
+#@google_benchmark.register
 @required_devices(2)
 def pmap_trivial_2_devices(state):
   f = jax.pmap(swap)
@@ -205,8 +205,8 @@ def pmap_trivial_2_devices(state):
     c.block_until_ready()
     d.block_until_ready()
 
-
-@google_benchmark.register
+# preview release works with single device
+#@google_benchmark.register
 @required_devices(8)
 def pmap_trivial_8_devices(state):
   f = jax.pmap(swap)
@@ -218,8 +218,8 @@ def pmap_trivial_8_devices(state):
     c.block_until_ready()
     d.block_until_ready()
 
-
-@google_benchmark.register
+# preview release works with single device
+#@google_benchmark.register
 @required_devices(2)
 def pmap_simple_2_devices(state):
   f = jax.pmap(lambda a, b: (a + b, a - b))
@@ -230,8 +230,8 @@ def pmap_simple_2_devices(state):
     c.block_until_ready()
     d.block_until_ready()
 
-
-@google_benchmark.register
+# preview release works with single device
+#@google_benchmark.register
 @required_devices(8)
 def pmap_simple_8_devices(state):
   f = jax.pmap(lambda a, b: (a + b, a - b))
@@ -258,13 +258,15 @@ def sda_index_1(state):
   _run_sda_index_bench(state, 1)
 
 
-@google_benchmark.register
+# preview release works with single device
+#@google_benchmark.register
 @required_devices(2)
 def sda_index_2(state):
   _run_sda_index_bench(state, 2)
 
 
-@google_benchmark.register
+# preview release works with single device
+#@google_benchmark.register
 @required_devices(8)
 def sda_index_8(state):
   _run_sda_index_bench(state, 8)
@@ -275,4 +277,7 @@ def swap(a, b):
 
 
 if __name__ == "__main__":
-  google_benchmark.main()
+  if jax.lib.xla_bridge.get_backend().platform_version.startswith("rocm") and jax.devices():
+    google_benchmark.main()
+  else:
+    print("No ROCm device found. Exit now!")
