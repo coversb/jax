@@ -47,6 +47,7 @@ class DebugNaNsTest(jtu.JaxTestCase):
     ans = jnp.tanh(A)
     ans.block_until_ready()
 
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testMultipleResultPrimitiveNoNaN(self):
     A = jnp.array([[1., 2.], [2., 3.]])
     ans, _ = jnp.linalg.eigh(A)
@@ -177,6 +178,7 @@ class DebugInfsTest(jtu.JaxTestCase):
     ans = jnp.tanh(A)
     ans.block_until_ready()
 
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testMultipleResultPrimitiveNoInf(self):
     A = jnp.array([[1., 2.], [2., 3.]])
     ans, _ = jnp.linalg.eigh(A)
@@ -217,8 +219,8 @@ class DebugInfsTest(jtu.JaxTestCase):
 
     for _ in range(2):
       try:
-       with jax.debug_nans(True):
-         jax.grad(f)(0.)
+        with jax.debug_nans(True):
+          jax.grad(f)(0.)
       except FloatingPointError:
         pass
 
