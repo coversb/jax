@@ -325,6 +325,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
       for n in [0, 4, 5, 50]
       for dtype in float_types + complex_types
       for lower in [True, False]))
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testEigh(self, n, dtype, lower):
     rng = jtu.rand_default(self.rng())
     tol = 1e-3
@@ -343,7 +344,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
 
     self._CompileAndCheck(partial(jnp.linalg.eigh, UPLO=uplo), args_maker,
                           rtol=1e-3)
-
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testEighZeroDiagonal(self):
     a = np.array([[0., -1., -1.,  1.],
                   [-1.,  0.,  1., -1.],
@@ -359,6 +360,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
        "shape": shape, "dtype": dtype}
       for shape in [(4, 4), (5, 5), (50, 50)]
       for dtype in float_types + complex_types))
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testEigvalsh(self, shape, dtype):
     rng = jtu.rand_default(self.rng())
     n = shape[-1]
@@ -403,6 +405,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
       for dtype in complex_types
       for lower in [True, False]
       for eps in [1e-4]))
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testEighGradVectorComplex(self, shape, dtype, lower, eps):
     rng = jtu.rand_default(self.rng())
     # Special case to test for complex eigenvector grad correctness.
@@ -447,6 +450,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
        "shape": shape, "dtype": dtype}
       for shape in [(1, 1), (4, 4), (5, 5)]
       for dtype in float_types + complex_types))
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testEighBatching(self, shape, dtype):
     rng = jtu.rand_default(self.rng())
     shape = (10,) + shape
@@ -910,6 +914,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
     # jtu.check_grads(lambda *args: jnp_fun(*args)[0], args_maker(), order=2, atol=1e-2, rtol=1e-2)
 
   # Regression test for incorrect type for eigenvalues of a complex matrix.
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testIssue669(self):
     def test(x):
       val, vec = jnp.linalg.eigh(x)
@@ -934,6 +939,7 @@ class NumpyLinalgTest(jtu.JaxTestCase):
     _ = jax.jacobian(jnp.linalg.solve, argnums=1)(A[0], b[0])
 
   @jtu.skip_on_flag("jax_skip_slow_tests", True)
+  @jtu.skip_on_devices("rocm")  # Missing Hermitian eigendecomp. in ROCSolver
   def testIssue1383(self):
     seed = jax.random.PRNGKey(0)
     tmp = jax.random.uniform(seed, (2,2))
