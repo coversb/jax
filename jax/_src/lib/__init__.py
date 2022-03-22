@@ -23,8 +23,9 @@ from typing import Optional, Tuple
 
 __all__ = [
   'cuda_linalg', 'cuda_prng', 'cusolver', 'hip_linalg', 'hip_prng',
-  'hipsolver','jaxlib', 'lapack', 'pocketfft', 'pytree',
-   'tpu_driver_client', 'version', 'xla_client', 'xla_extension',
+  'hipsolver','jaxlib', 'lapack', 'linalg_apis', 'pocketfft', 'pytree',
+  'sparse_apis', 'solver_apis', 'tpu_driver_client', 'version', 'xla_client',
+  'xla_extension',
 ]
 
 # Before attempting to import jaxlib, warn about experimental
@@ -116,6 +117,8 @@ try:
 except ImportError:
   hipsolver = None
 
+solver_apis = cusolver or hipsolver or None
+
 try:
   import jaxlib.cusparse as cusparse  # pytype: disable=import-error
 except ImportError:
@@ -138,6 +141,8 @@ try:
 except ImportError:
   hip_prng = None
 
+prng_apis = cuda_prng or hip_prng or None
+
 try:
   import jaxlib.cuda_linalg as cuda_linalg  # pytype: disable=import-error
 except ImportError:
@@ -147,6 +152,8 @@ try:
   import jaxlib.hip_linalg as hip_linalg  # pytype: disable=import-error
 except ImportError:
   hip_linalg = None
+
+linalg_apis = cuda_linalg or hip_linalg or None
 
 # Jaxlib code is split between the Jax and the Tensorflow repositories.
 # Only for the internal usage of the JAX developers, we expose a version

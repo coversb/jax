@@ -34,11 +34,8 @@ from jax._src.lax.lax import (
     _input_dtype, _broadcasting_select)
 from jax._src.lax import lax as lax_internal
 from jax._src.lib import lapack
-
-from jax._src.lib import cuda_linalg
-from jax._src.lib import cusolver
-from jax._src.lib import hip_linalg
-from jax._src.lib import hipsolver
+from jax._src.lib import linalg_apis
+from jax._src.lib import solver_apis
 from jax._src.lib import sparse_apis
 
 from jax._src.lib import xla_client
@@ -368,16 +365,10 @@ xla.register_translation(
     partial(_cholesky_cpu_gpu_translation_rule, lapack.potrf),
     platform='cpu')
 
-if cusolver is not None:
+if solver_apis is not None:
   xla.register_translation(
     cholesky_p,
-    partial(_cholesky_cpu_gpu_translation_rule, cusolver.potrf),
-    platform='gpu')
-
-if hipsolver is not None:
-  xla.register_translation(
-    cholesky_p,
-    partial(_cholesky_cpu_gpu_translation_rule, hipsolver.potrf),
+    partial(_cholesky_cpu_gpu_translation_rule, solver_apis.potrf),
     platform='gpu')
 
 # Asymmetric eigendecomposition
@@ -569,16 +560,10 @@ xla.register_translation(
     eigh_p, partial(_eigh_cpu_gpu_translation_rule, _cpu_syevd),
     platform='cpu')
 
-if cusolver is not None:
+if solver_apis is not None:
   xla.register_translation(
-    eigh_p, partial(_eigh_cpu_gpu_translation_rule, cusolver.syevd),
+    eigh_p, partial(_eigh_cpu_gpu_translation_rule, solver_apis.syevd),
     platform='gpu')
-
-if hipsolver is not None:
-  xla.register_translation(
-    eigh_p, partial(_eigh_cpu_gpu_translation_rule, hipsolver.syevd),
-    platform='gpu')
-
 
 triangular_solve_dtype_rule = partial(
     naryop_dtype_rule, _input_dtype, (_float | _complex, _float | _complex),
@@ -753,16 +738,10 @@ def _triangular_solve_gpu_translation_rule(
     return [xops.TriangularSolve(a, b, left_side, lower, unit_diagonal,
                                  transpose)]
 
-if cusolver is not None:
+if solver_apis is not None:
   xla.register_translation(
       triangular_solve_p,
-      partial(_triangular_solve_gpu_translation_rule, cusolver.trsm),
-      platform='gpu')
-
-if hipsolver is not None:
-  xla.register_translation(
-      triangular_solve_p,
-      partial(_triangular_solve_gpu_translation_rule, hipsolver.trsm),
+      partial(_triangular_solve_gpu_translation_rule, solver_apis.trsm),
       platform='gpu')
 
 # Support operation for LU decomposition: Transformation of the pivots returned
@@ -838,12 +817,11 @@ def _lu_pivots_to_permutation_batching_rule(batched_args, batch_dims, *,
 
 def _lu_pivots_to_permutation_gpu(ctx, avals_in, avals_out, pivots, *,
                                   permutation_size):
-  if cuda_linalg:
-    return [cuda_linalg.lu_pivots_to_permutation(
-        ctx.builder, pivots, permutation_size=permutation_size)]
-  if hip_linalg:
-    return [hip_linalg.lu_pivots_to_permutation(
-        ctx.builder, pivots, permutation_size=permutation_size)]
+  return [
+      linalg_apis.lu_pivots_to_permutation(ctx.builder,
+                                           pivots,
+                                           permutation_size=permutation_size)
+  ]
 
 lu_pivots_to_permutation_p = Primitive('lu_pivots_to_permutation')
 lu_pivots_to_permutation_p.multiple_results = False
@@ -858,15 +836,11 @@ xla.register_translation(
     xla.lower_fun(_generic_lu_pivots_to_permutation, multiple_results=False,
                   new_style=True))
 
-if cuda_linalg:
+if linalg_apis:
   xla.register_translation(lu_pivots_to_permutation_p,
                            _lu_pivots_to_permutation_gpu,
                            platform='gpu')
 
-if hip_linalg:
-  xla.register_translation(lu_pivots_to_permutation_p,
-                           _lu_pivots_to_permutation_gpu,
-                           platform='gpu')
 # LU decomposition
 
 # Computes a pivoted LU decomposition such that
@@ -1054,14 +1028,9 @@ xla.register_translation(lu_p,
                          partial(_lu_cpu_gpu_translation_rule, lapack.getrf),
                          platform='cpu')
 
-if cusolver is not None:
+if solver_apis is not None:
   xla.register_translation(
-      lu_p, partial(_lu_cpu_gpu_translation_rule, cusolver.getrf),
-      platform='gpu')
-
-if hipsolver is not None:
-  xla.register_translation(
-      lu_p, partial(_lu_cpu_gpu_translation_rule, hipsolver.getrf),
+      lu_p, partial(_lu_cpu_gpu_translation_rule, solver_apis.getrf),
       platform='gpu')
 
 xla.register_translation(lu_p, _lu_tpu_translation_rule, platform='tpu')
@@ -1221,16 +1190,10 @@ xla.register_translation(
     qr_p, partial(_qr_cpu_gpu_translation_rule, lapack.geqrf, lapack.orgqr),
     platform='cpu')
 
-if cusolver is not None:
+if solver_apis is not None:
   xla.register_translation(
       qr_p,
-      partial(_qr_cpu_gpu_translation_rule, cusolver.geqrf, cusolver.orgqr),
-      platform='gpu')
-
-if hipsolver is not None:
-  xla.register_translation(
-      qr_p,
-      partial(_qr_cpu_gpu_translation_rule, hipsolver.geqrf, hipsolver.orgqr),
+      partial(_qr_cpu_gpu_translation_rule, solver_apis.geqrf, solver_apis.orgqr),
       platform='gpu')
 
 # Singular value decomposition
@@ -1393,14 +1356,9 @@ xla.register_translation(
     svd_p, partial(_svd_cpu_gpu_translation_rule, lapack.gesdd),
     platform='cpu')
 
-if cusolver is not None:
+if solver_apis is not None:
   xla.register_translation(
-    svd_p, partial(_svd_cpu_gpu_translation_rule, cusolver.gesvd),
-    platform='gpu')
-
-if hipsolver is not None:
-  xla.register_translation(
-    svd_p, partial(_svd_cpu_gpu_translation_rule, hipsolver.gesvd),
+    svd_p, partial(_svd_cpu_gpu_translation_rule, solver_apis.gesvd),
     platform='gpu')
 
 def _tridiagonal_solve_gpu_translation_rule(ctx, avals_in, avals_out, dl, d, du,
