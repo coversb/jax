@@ -101,8 +101,8 @@ build:windows --experimental_strict_action_env=true
 build:linux --config=posix
 # Workaround for gcc 10+ warnings related to upb.
 # See https://github.com/tensorflow/tensorflow/issues/39467
-build:linux --copt=-Wno-stringop-truncation
-build:linux --copt=-Wno-array-parameter
+#build:linux --copt=-Wno-stringop-truncation
+#build:linux --copt=-Wno-array-parameter
 
 build:macos --config=posix
 
